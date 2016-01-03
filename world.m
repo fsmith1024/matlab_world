@@ -4,6 +4,10 @@ classdef world < handle
       pState = [];
     end
     
+    properties (Dependent)
+        color
+    end
+    
     methods
         function obj = world()
            obj.pState = worldState();
@@ -15,6 +19,14 @@ classdef world < handle
         
         function t = make(obj,varargin)
             t = obj.pState.make(varargin{:});
-        end        
+        end     
+        
+        function c = get.color(obj)
+            c = obj.pState.color;
+        end
+        
+        function set.color(obj,c)
+            obj.pState.color = c;
+        end
     end
 end

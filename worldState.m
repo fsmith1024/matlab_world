@@ -8,6 +8,9 @@ classdef worldState < handle
         pMoved = false(0,0);
     end
     
+    properties (Dependent)
+        color
+    end
     methods
         function obj = worldState
             F = figure(...
@@ -32,6 +35,14 @@ classdef worldState < handle
         
         function a = axis(obj)
             a = obj.pAxis;
+        end
+        
+        function c = get.color(obj)
+            c = obj.pFigure.Color;
+        end
+        
+        function set.color(obj,c)
+            obj.pFigure.Color = c;
         end
         
         function t = make(obj,name)
