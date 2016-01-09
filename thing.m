@@ -16,11 +16,14 @@ classdef thing < handle
     end
     
     methods
-        function obj = thing(W,id,name,pos)
+        function obj = thing(W,id,name,pos,sz)
             obj.pWorldState = W;
             obj.pId = id;
             obj.pPosition = pos; % Bottom left corner.
             obj.pSize = [20 20]; % Width and height
+            if nargin > 4
+                obj.pSize = sz;
+            end
             obj.pPatch = createPatch(W.axis, pos,obj.pSize);
             obj.pName = name;
         end

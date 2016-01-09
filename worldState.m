@@ -6,11 +6,20 @@ classdef worldState < handle
         pYLim = [-250 250];
         pThings = [];
         pMoved = false(0,0);
+        pGrid = 0;
+        pGridColor = [1 1 1];
+        pBlockSize;
     end
     
     properties (Dependent)
         color
+        xLim
+        yLim
+        gridColor
+        grid
+        blockSize
     end
+    
     methods
         function obj = worldState
             F = figure(...
@@ -31,6 +40,7 @@ classdef worldState < handle
             
             obj.pFigure = F;
             obj.pAxis = A;
+            obj.pBlockSize = [20 20];
         end
         
         function a = axis(obj)
@@ -43,6 +53,7 @@ classdef worldState < handle
         
         function set.color(obj,c)
             obj.pFigure.Color = c;
+            obj.refreshGrid;
         end
         
         function t = make(obj,name)
@@ -51,12 +62,20 @@ classdef worldState < handle
             end
             pos = [0 0];
             id = numel(obj.pThings) + 1;
-            t = thing(obj,id,name,pos);
+            t = thing(obj,id,name,pos,obj.blockSize);
             if isempty(obj.pThings)
                 obj.pThings = t;
             else
                 obj.pThings(id) = t;
             end
+        end
+        
+        function set.blockSize(obj,sz)
+            obj.pBlockSize = sz;
+        end
+        
+        function sz = get.blockSize(obj)
+            sz = obj.pBlockSize;
         end
         
         function registerMove(obj,thing,~) %newPosition)
@@ -81,5 +100,65 @@ classdef worldState < handle
                 delete(T(i));
             end
         end
+        
+        function set.xLim(obj,x)
+            obj.pAxis.XLim = x;
+        end
+        
+        function x = get.xLim(obj)
+            x = obj.pAxis.XLim;
+        end
+        
+        function set.yLim(obj,y)
+            obj.pAxis.YLim = y;
+        end
+        
+        function y = get.yLim(obj)
+            y = obj.pAxis.YLim;
+        end
+        
+        function g = get.grid(obj)
+            g = obj.pGrid;
+        end
+        
+        function set.grid(obj,x)
+            if obj.pGrid == x
+                return;
+            end
+            obj.pGrid = x;
+            obj.refreshGrid();
+        end
+        
+        function c = get.gridColor(obj)
+            c = obj.pGridColor;
+        end
+        
+        function set.gridColor(obj,c)
+            if isequal(obj.pGridColor,c)
+                return;
+            end
+            obj.pGridColor = c;
+            obj.refreshGrid();
+        end
+        
+        function refreshGrid(obj)
+            changeGridHelper(obj.pAxis,obj.pGrid,obj.color,obj.pGridColor);
+        end
     end
+end
+
+function changeGridHelper(ax,enable,backgroundColor,gridColor)
+
+if enable
+    ax.XAxis.Color = gridColor;
+    ax.YAxis.Color = gridColor;
+    ax.GridColor = gridColor;
+    ax.GridAlpha = 0.3;
+    ax.XGrid = 'on';
+    ax.YGrid = 'on';
+    ax.Color = backgroundColor;
+    ax.Visible = 'on';
+else
+    ax.Visible = 'off';
+end
 end
